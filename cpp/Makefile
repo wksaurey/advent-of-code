@@ -1,9 +1,9 @@
-# Run from cpp/:  make dayNN [YEAR=2025] [DEBUG=1]
+# Run from cpp/:  make dayNN [YEAR=2026] [DEBUG=1]
 # Layout: util/*.{h,cpp} shared by every year, <YEAR>/dayNN.cpp per puzzle.
 # Binaries run from the repo root, so input paths are relative to aoc/.
 
 CXX   := g++
-YEAR  ?= 2025
+YEAR  ?= 2026
 DEBUG ?= 0
 
 ifeq ($(DEBUG), 1)
@@ -31,7 +31,7 @@ all: help
 
 help:
 	@echo "Usage:"
-	@echo "  make dayNN [YEAR=2025] [DEBUG=1]   build and run dayNN"
+	@echo "  make dayNN [YEAR=2026] [DEBUG=1]   build and run dayNN"
 	@echo "  make clean                         remove all build products"
 
 $(UTIL_OBJ_DIR)/%.o: util/%.cpp | $(UTIL_OBJ_DIR)
