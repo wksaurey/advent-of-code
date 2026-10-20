@@ -1,4 +1,4 @@
-#include "util/io.h"
+#include "io.h"
 #include <fstream>
 
 std::vector<std::string> readLines(const std::string& filename) {

@@ -1,17 +1,13 @@
-
-#include "util/str_util.h"
-#include <iostream>
+#include "str_util.h"
 #include <sstream>
 #include <string>
 
-using namespace std;
+void splitString(std::string& input, char delimiter, std::string arr[], int& index) {
+    std::istringstream stream(input);
 
-void splitString(string& input, char delimiter, string arr[], int& index) {
-    istringstream stream(input);
+    std::string token;
 
-    string token;
-
-    while(getline(stream, token, delimiter)) {
+    while (std::getline(stream, token, delimiter)) {
         arr[index++] = token;
     }
 }
