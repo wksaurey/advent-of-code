@@ -1,0 +1,12 @@
+# build products
+build/
+
+# puzzle inputs: the AoC author asks that they not be shared
+input/
+inputs/
+
+# secrets (AoC session cookie for an input downloader)
+.env
+
+__pycache__/
+.vscode/
