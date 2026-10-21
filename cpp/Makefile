@@ -1,9 +1,11 @@
-# Run from cpp/:  make dayNN [YEAR=2026] [DEBUG=1]
+# Run from cpp/:  make dayNN [2025] [DEBUG=1]
 # Layout: util/*.{h,cpp} shared by every year, <YEAR>/dayNN.cpp per puzzle.
-# Binaries run from the repo root, so input paths are relative to aoc/.
+# Binaries run from the input/YEAR/ folder, so input paths are just the input filename.
 
 CXX   := g++
-YEAR  ?= 2026
+# a bare year on the command line picks the year: make day01 2025
+YEAR_ARG := $(firstword $(filter 20%,$(MAKECMDGOALS)))
+YEAR     ?= $(or $(YEAR_ARG),2026)
 DEBUG ?= 0
 
 ifeq ($(DEBUG), 1)
@@ -31,7 +33,7 @@ all: help
 
 help:
 	@echo "Usage:"
-	@echo "  make dayNN [YEAR=2026] [DEBUG=1]   build and run dayNN"
+	@echo "  make dayNN [2025] [DEBUG=1]        build and run dayNN (year defaults to 2026)"
 	@echo "  make clean                         remove all build products"
 
 $(UTIL_OBJ_DIR)/%.o: util/%.cpp | $(UTIL_OBJ_DIR)
@@ -44,7 +46,7 @@ $(BIN_DIR)/day%: $(DAY_OBJ_DIR)/day%.o $(UTIL_OBJ) | $(BIN_DIR)
 	$(CXX) $(OPTFLAGS) $^ -o $@
 
 day%: $(BIN_DIR)/day%
-	cd .. && ./cpp/$<
+	cd .. && ./cpp/$< input/$(YEAR)/day$*.txt
 
 $(UTIL_OBJ_DIR) $(DAY_OBJ_DIR) $(BIN_DIR):
 	mkdir -p $@
@@ -57,3 +59,10 @@ clean:
 # keep objects and binaries between runs instead of deleting them as intermediates
 .SECONDARY:
 .PHONY: all help clean
+
+# the year is not a real target; give it a silent no-op so make doesn't complain
+ifneq ($(YEAR_ARG),)
+.PHONY: $(YEAR_ARG)
+$(YEAR_ARG):
+	@:
+endif
