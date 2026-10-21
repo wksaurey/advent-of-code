@@ -1,4 +1,4 @@
-# Run from cpp/:  make dayNN [2025] [DEBUG=1]
+# Run from cpp/:  make dayNN [2025] [test] [DEBUG=1]
 # Layout: util/*.{h,cpp} shared by every year, <YEAR>/dayNN.cpp per puzzle.
 # Binaries run from the input/YEAR/ folder, so input paths are just the input filename.
 
@@ -7,6 +7,8 @@ CXX   := g++
 YEAR_ARG := $(firstword $(filter 20%,$(MAKECMDGOALS)))
 YEAR     ?= $(or $(YEAR_ARG),2026)
 DEBUG ?= 0
+TEST_ARG := $(firstword $(filter test,$(MAKECMDGOALS)))
+TEST     ?= $(or $(TEST_ARG), 0)
 
 ifeq ($(DEBUG), 1)
     MODE     := debug
@@ -14,6 +16,12 @@ ifeq ($(DEBUG), 1)
 else
     MODE     := release
     OPTFLAGS := -O2
+endif
+
+ifneq ($(TEST), 0)
+    INPUT_END := _test
+else
+    INPUT_END :=
 endif
 
 # -I. makes #include "util/io.h" resolve to cpp/util/io.h
@@ -33,8 +41,8 @@ all: help
 
 help:
 	@echo "Usage:"
-	@echo "  make dayNN [2025] [DEBUG=1]        build and run dayNN (year defaults to 2026)"
-	@echo "  make clean                         remove all build products"
+	@echo "  make dayNN [2025] [test] [DEBUG=1]        build and run dayNN (year defaults to 2026) (test defaults to off)"
+	@echo "  make clean                                remove all build products"
 
 $(UTIL_OBJ_DIR)/%.o: util/%.cpp | $(UTIL_OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -46,7 +54,7 @@ $(BIN_DIR)/day%: $(DAY_OBJ_DIR)/day%.o $(UTIL_OBJ) | $(BIN_DIR)
 	$(CXX) $(OPTFLAGS) $^ -o $@
 
 day%: $(BIN_DIR)/day%
-	cd .. && ./cpp/$< input/$(YEAR)/day$*.txt
+	cd .. && ./cpp/$< input/$(YEAR)/day$*$(INPUT_END).txt
 
 $(UTIL_OBJ_DIR) $(DAY_OBJ_DIR) $(BIN_DIR):
 	mkdir -p $@
@@ -64,5 +72,12 @@ clean:
 ifneq ($(YEAR_ARG),)
 .PHONY: $(YEAR_ARG)
 $(YEAR_ARG):
+	@:
+endif
+
+# test is not a real target; give it a silent no-op so make doesn't complain
+ifneq ($(TEST_ARG),)
+.PHONY: $(TEST_ARG)
+$(TEST_ARG):
 	@:
 endif
